@@ -27,12 +27,10 @@ def create_feature_collection(user_lat_long_list):
         - Properties: bike_id (1-50 based on the request - not unique)
                     last_activity_at date
     '''
-    location_geojson_list = []
+    #location_geojson_list = []
     feature_list = []
     for lat_long in user_lat_long_list:
         location_geojson = _location_query(lat_long[0],lat_long[1])
-        location_geojson_list.append(location_geojson)
-    for location_geojson in location_geojson_list:
         for bikes in location_geojson['data']['attributes']['nearby_locked_bikes']:
             us_lat = bikes['attributes']['latitude']
             us_long = bikes['attributes']['longitude']
@@ -40,6 +38,7 @@ def create_feature_collection(user_lat_long_list):
             last_activity = bikes['attributes']['last_activity_at']
             my_feature = Feature(geometry=Point((us_long,us_lat)), properties={"bike_id": bike_id, "last_activity_at": last_activity})
             feature_list.append(my_feature)
+        sleep(1.5)
     feature_collection = FeatureCollection(feature_list)
     return feature_collection
 
@@ -49,6 +48,15 @@ def output_geojson(filename, feature_collection):
      '''
     with open(filename, 'w') as outfile:
         geojson.dump(feature_collection, outfile)
+
+def create_csv(filename, user_lat_long_list):
+    '''Input - filename and user_lat_long_list
+        Output - csv file called 'filename'
+     '''
+    pass
+
+def amend_csv(filename):
+    pass
 
 def append_feature_collection(filename,new_feature):
     '''import json
